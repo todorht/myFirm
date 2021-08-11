@@ -12,7 +12,8 @@ import java.io.Serializable;
 @AllArgsConstructor
 @Getter
 public class EmployeeInfo implements Serializable {
-    public String id;
+    public int id;
     public String name;
     public String surname;
+    public String cardNumber;
 }

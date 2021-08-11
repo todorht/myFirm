@@ -4,9 +4,7 @@ import lombok.AllArgsConstructor;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 
-import javax.persistence.Entity;
-import javax.persistence.Id;
-import javax.persistence.Table;
+import javax.persistence.*;
 import java.io.Serializable;
 
 @Entity
@@ -17,10 +15,21 @@ import java.io.Serializable;
 public class Employee implements Serializable {
 
     @Id
+    @GeneratedValue(strategy = GenerationType.IDENTITY)
     private int id;
     private String name;
     private String surname;
     private String cardNumber;
     private String email;
+
+    public static Employee build(int id, String name, String surname, String cardNumber, String email){
+        Employee e = new Employee();
+        e.id = id;
+        e.name = name;
+        e.surname = surname;
+        e.cardNumber = cardNumber;
+        e.email = email;
+        return e;
+    }
 
 }

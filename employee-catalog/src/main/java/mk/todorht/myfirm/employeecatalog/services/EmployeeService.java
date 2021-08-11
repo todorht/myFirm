@@ -1,14 +1,16 @@
 package mk.todorht.myfirm.employeecatalog.services;
 
-
 import mk.todorht.myfirm.employeecatalog.domain.models.Employee;
-import mk.todorht.myfirm.employeecatalog.services.dto.EmployeeDto;
+import mk.todorht.myfirm.employeecatalog.services.form.EmployeeForm;
+import mk.todorht.myfirm.sharedkernel.base.EmployeeInfo;
+import mk.todorht.myfirm.sharedkernel.services.GenericService;
 
 import java.util.List;
 import java.util.Optional;
 
-public interface EmployeeService {
-    List<EmployeeDto> findAll();
-    Optional<EmployeeDto> findById(int id);
-    Optional<EmployeeDto> findByCardNumber(String cardNumber);
+public interface EmployeeService extends GenericService<Employee, Integer> {
+    List<EmployeeInfo> findAllEmployees();
+    Optional<EmployeeInfo> findEmployeeById(int id);
+    Optional<EmployeeInfo> findEmployeeByCardNumber(String cardNumber);
+    Employee createEmployee(EmployeeForm employeeForm);
 }

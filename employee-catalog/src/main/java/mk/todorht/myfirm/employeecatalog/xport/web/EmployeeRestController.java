@@ -2,38 +2,41 @@ package mk.todorht.myfirm.employeecatalog.xport.web;
 
 import lombok.AllArgsConstructor;
 import mk.todorht.myfirm.employeecatalog.services.EmployeeService;
-import mk.todorht.myfirm.employeecatalog.services.dto.EmployeeDto;
+import mk.todorht.myfirm.employeecatalog.services.form.EmployeeForm;
+import mk.todorht.myfirm.sharedkernel.base.EmployeeInfo;
 import org.springframework.http.ResponseEntity;
-import org.springframework.web.bind.annotation.GetMapping;
-import org.springframework.web.bind.annotation.PathVariable;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RestController;
+import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
 
 @RestController
 @AllArgsConstructor
-@RequestMapping("/employees")
+@RequestMapping("/employee-catalog")
 public class EmployeeRestController {
 
     private final EmployeeService employeeService;
 
     @GetMapping
-    public List<EmployeeDto> findAll(){
-        return this.employeeService.findAll();
+    public List<EmployeeInfo> findAll(){
+        return this.employeeService.findAllEmployees();
     }
 
     @GetMapping("/{id}")
-    public ResponseEntity<EmployeeDto> findById(@PathVariable(name = "id") int id){
-        var employee = this.employeeService.findById(id);
-        return employee.map(employeeDto -> ResponseEntity.ok().body(employeeDto))
+    public ResponseEntity<EmployeeInfo> findById(@PathVariable(name = "id") int id){
+        var employee = this.employeeService.findEmployeeById(id);
+        return employee.map(employeeInfo -> ResponseEntity.ok().body(employeeInfo))
                 .orElseGet(() -> ResponseEntity.notFound().build());
     }
 
     @GetMapping("/card/{cardNumber}")
-    public ResponseEntity<EmployeeDto> findByCardNumber(@PathVariable(name = "cardNumber") String cardNumber){
-        var employee = this.employeeService.findByCardNumber(cardNumber);
+    public ResponseEntity<EmployeeInfo> findByCardNumber(@PathVariable(name = "cardNumber") String cardNumber){
+        var employee = this.employeeService.findEmployeeByCardNumber(cardNumber);
         return employee.map(employeeDto -> ResponseEntity.ok().body(employeeDto))
                 .orElseGet(() -> ResponseEntity.notFound().build());
+    }
+
+    @PostMapping
+    public void addEmployee(@RequestBody EmployeeForm employeeForm){
+        this.employeeService.createEmployee(employeeForm);
     }
 }

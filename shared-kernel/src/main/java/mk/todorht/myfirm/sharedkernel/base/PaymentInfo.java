@@ -1,16 +1,22 @@
 package mk.todorht.myfirm.sharedkernel.base;
 
 import lombok.AllArgsConstructor;
+import lombok.Getter;
 import lombok.NoArgsConstructor;
 import mk.todorht.myfirm.sharedkernel.financial.Money;
 
 import javax.persistence.*;
-import java.util.Date;
+import java.io.Serializable;
+import java.time.LocalDate;
 
 @MappedSuperclass
 @AllArgsConstructor
 @NoArgsConstructor
-public abstract class InvoiceInfo {
+@Getter
+public class PaymentInfo<ID extends Serializable> {
+
+    @EmbeddedId
+    private ID id;
 
     private String companyName;
     @AttributeOverrides({
@@ -19,7 +25,13 @@ public abstract class InvoiceInfo {
     })
     private Money amount;
 
-    private Date createAt;
-    private Date expiresAt;
+    private LocalDate createAt;
+    private LocalDate expiresAt;
     private boolean paid;
+
+    public void markAsPaid(){
+        paid = true;
+    }
+
+
 }

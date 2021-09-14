@@ -1,5 +1,6 @@
 package mk.todorht.myfirm.employeecatalog.services.impl;
 
+import mk.todorht.myfirm.employeecatalog.domain.exceptions.EmployeeNotFounded;
 import mk.todorht.myfirm.employeecatalog.domain.exceptions.EmployeeWithThisIdAlreadyExist;
 import mk.todorht.myfirm.employeecatalog.domain.models.Employee;
 import mk.todorht.myfirm.employeecatalog.domain.repository.EmployeeRepository;
@@ -34,13 +35,20 @@ public class EmployeeServiceImpl extends GenericServiceImpl<Employee, Integer> i
 
     @Override
     public Optional<EmployeeInfo> findEmployeeById(int id) {
-        return findById(id).map(this::mapFrom);
+        var employeeInfo = findById(id);
+        if(employeeInfo.isEmpty()){
+            throw new EmployeeNotFounded();
+        }else return findById(id).map(this::mapFrom);
     }
 
     @Override
     public Optional<EmployeeInfo> findEmployeeByCardNumber(String cardNumber) {
-        var employee = findAll().stream().filter(employee1 -> employee1.getCardNumber().equals(cardNumber)).findFirst();
-        return employee.map(this::mapFrom);
+        var employeeInfo = findAll().stream()
+                .filter(employee1 -> employee1.getCardNumber()
+                        .equals(cardNumber)).findFirst();
+        if(employeeInfo.isEmpty()){
+            throw new EmployeeNotFounded();
+        }else return employeeInfo.map(this::mapFrom);
     }
 
     @Override

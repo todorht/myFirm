@@ -50,6 +50,14 @@ public class Money implements Serializable {
         return new Money(currency,amount*m);
     }
 
+    public Money divide(Money money){
+        if (!currency.equals(money.currency)) {
+            throw new IllegalArgumentException("Cannot divide two Money objects with different currencies");
+        }
+        if(money.amount==0) throw new IllegalArgumentException("Cannot divide by zero");
+        return new Money(currency, amount/money.amount);
+    }
+
     @Override
     public boolean equals(Object o) {
         if (this == o) return true;

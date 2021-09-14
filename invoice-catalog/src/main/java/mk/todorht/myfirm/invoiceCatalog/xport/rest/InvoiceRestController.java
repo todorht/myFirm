@@ -1,9 +1,11 @@
-package mk.todorht.myfirm.invoiceCatalog.xport;
+package mk.todorht.myfirm.invoiceCatalog.xport.rest;
 
 import lombok.AllArgsConstructor;
 import mk.todorht.myfirm.invoiceCatalog.domain.models.Invoice;
 import mk.todorht.myfirm.invoiceCatalog.domain.models.InvoiceId;
 import mk.todorht.myfirm.invoiceCatalog.services.InvoiceService;
+import mk.todorht.myfirm.invoiceCatalog.services.form.InvoiceForm;
+import mk.todorht.myfirm.invoiceCatalog.services.form.PaymentForm;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
@@ -29,14 +31,10 @@ public class InvoiceRestController {
     }
 
     @PutMapping("/")
-    public void markAsPaid(@RequestBody InvoiceId invoiceId){
-        this.invoiceService.markAsPaid(invoiceId);
-    }
+    public void markAsPaid(@RequestBody PaymentForm paymentForm){ this.invoiceService.markAsPaid(paymentForm); }
 
     @GetMapping("/{employeeId}")
-    public List<Invoice> getAllInvoiceByEmployee(@PathVariable Integer employeeId){
-        return this.invoiceService.findAllByEmployeeId(employeeId);
-    }
+    public List<Invoice> getAllInvoiceByEmployee(@PathVariable Integer employeeId){ return this.invoiceService.findAllByEmployeeId(employeeId); }
 
 
 }

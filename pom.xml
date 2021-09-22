@@ -16,9 +16,10 @@
     <packaging>pom</packaging>
 
     <modules>
-        <module>activitiestracker</module>
+        <module>salary-management</module>
         <module>shared-kernel</module>
         <module>invoice-catalog</module>
+        <module>turnover-management</module>
     </modules>
 
     <description>Demo project for Spring Boot</description>

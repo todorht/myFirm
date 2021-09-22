@@ -13,4 +13,9 @@ public class PaymentForm {
     private long invoice_num;
     @NotNull
     private LocalDate date;
+
+    public PaymentForm(@NotNull long invoice_num, @NotNull LocalDate date) {
+        this.invoice_num = invoice_num;
+        this.date = date;
+    }
 }

@@ -45,12 +45,13 @@ public class Salary {
         this.salaryItemList.add(salaryItem);
     }
 
-    public void addBonus(double amount){
-        this.bonus = new Money(Currency.MKD,amount);
+    public void addBonus(Money money){
+        this.bonus = money;
     }
 
-    public void addPenalty(double amount){
-        this.penalty = new Money(Currency.MKD,amount);
+
+    public void removeDefaultPenalty(){
+        this.penalty = this.penalty.subtract(new Money(Currency.MKD,5000));
     }
 
     public Money total(){
@@ -65,7 +66,7 @@ public class Salary {
         this.salaryId = salaryId;
         this.employeeInfo = employeeInfo;
         this.bonus= new Money(Currency.MKD,0);
-        this.penalty= new Money(Currency.MKD,0);
+        this.penalty= new Money(Currency.MKD,5000);
         this.salaryItemList= new ArrayList<>();
     }
 }

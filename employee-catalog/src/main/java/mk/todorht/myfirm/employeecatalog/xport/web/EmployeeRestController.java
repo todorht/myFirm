@@ -28,13 +28,6 @@ public class EmployeeRestController {
                 .orElseGet(() -> ResponseEntity.notFound().build());
     }
 
-    @GetMapping("/card/{cardNumber}")
-    public ResponseEntity<EmployeeInfo> findByCardNumber(@PathVariable(name = "cardNumber") String cardNumber){
-        var employee = this.employeeService.findEmployeeByCardNumber(cardNumber);
-        return employee.map(employeeDto -> ResponseEntity.ok().body(employeeDto))
-                .orElseGet(() -> ResponseEntity.notFound().build());
-    }
-
     @PostMapping
     public void addEmployee(@RequestBody EmployeeForm employeeForm){
         this.employeeService.createEmployee(employeeForm);

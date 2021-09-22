@@ -4,6 +4,7 @@ import mk.todorht.myfirm.sharedkernel.events.DomainEvent;
 import org.apache.kafka.common.serialization.StringDeserializer;
 import mk.todorht.myfirm.sharedkernel.events.salary.SalaryItemCreated;
 import org.apache.kafka.clients.consumer.ConsumerConfig;
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.data.domain.DomainEvents;
@@ -23,7 +24,6 @@ public class KafkaConfiguration {
     @Bean
     public ConsumerFactory<String, String> salaryConsumerFactory() {
         Map<String, Object> config = new HashMap<>();
-
         config.put(ConsumerConfig.BOOTSTRAP_SERVERS_CONFIG, "localhost:9092");
         config.put(ConsumerConfig.GROUP_ID_CONFIG, "salaryManagement");
         config.put(ConsumerConfig.KEY_DESERIALIZER_CLASS_CONFIG, StringDeserializer.class);

@@ -1,7 +1,9 @@
 package mk.todorht.myfirm.invoiceCatalog;
 
+import mk.todorht.myfirm.sharedkernel.services.EmployeeClient;
 import org.springframework.boot.SpringApplication;
 import org.springframework.boot.autoconfigure.SpringBootApplication;
+import org.springframework.cloud.client.loadbalancer.LoadBalanced;
 import org.springframework.context.annotation.Bean;
 import org.springframework.web.client.RestTemplate;
 
@@ -13,7 +15,13 @@ public class InvoiceCatalogApplication {
     }
 
     @Bean
-    RestTemplate getRestTemplate(){
+    @LoadBalanced
+    public RestTemplate getRestTemplate(){
         return new RestTemplate();
+    }
+
+    @Bean
+    public EmployeeClient employeeClient(){
+        return new EmployeeClient(getRestTemplate());
     }
 }

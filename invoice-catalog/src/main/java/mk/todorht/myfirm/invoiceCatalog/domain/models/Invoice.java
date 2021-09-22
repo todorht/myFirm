@@ -24,7 +24,8 @@ public class Invoice extends PaymentInfo<InvoiceId> {
     })
     private EmployeeInfo employee;
 
-    public Invoice(InvoiceId invoiceId,String companyName,EmployeeInfo employee,Money amount, LocalDate createAt,
+    public Invoice(InvoiceId invoiceId,String companyName,
+                   EmployeeInfo employee,Money amount, LocalDate createAt,
                    LocalDate expiresAt,  boolean paid) {
         super(invoiceId, companyName, amount, createAt, expiresAt, paid);
         this.employee = employee;

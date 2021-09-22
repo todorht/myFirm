@@ -1,18 +1,15 @@
 package mk.todorht.myfirm.salarymanagement.sevices.impl;
 
-import com.fasterxml.jackson.core.JsonProcessingException;
-import com.fasterxml.jackson.databind.JsonMappingException;
-import com.fasterxml.jackson.databind.ObjectMapper;
+import mk.todorht.myfirm.salarymanagement.domain.exceptions.SalaryItemNullException;
+import mk.todorht.myfirm.salarymanagement.domain.exceptions.SalaryNotFoundedException;
 import mk.todorht.myfirm.salarymanagement.domain.model.Salary;
 import mk.todorht.myfirm.salarymanagement.domain.model.SalaryId;
 import mk.todorht.myfirm.salarymanagement.domain.model.SalaryItem;
 import mk.todorht.myfirm.salarymanagement.domain.repository.SalaryRepository;
 import mk.todorht.myfirm.salarymanagement.sevices.SalaryService;
-import mk.todorht.myfirm.salarymanagement.sevices.form.SalaryForm;
-import mk.todorht.myfirm.salarymanagement.sevices.form.SalaryItemForm;
-import mk.todorht.myfirm.salarymanagement.web.client.EmployeeClient;
 import mk.todorht.myfirm.sharedkernel.events.salary.SalaryItemCreated;
 import mk.todorht.myfirm.sharedkernel.financial.Money;
+import mk.todorht.myfirm.sharedkernel.services.EmployeeClient;
 import mk.todorht.myfirm.sharedkernel.services.impl.GenericServiceImpl;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
@@ -42,28 +39,41 @@ public class SalaryServiceImpl extends GenericServiceImpl<Salary, SalaryId> impl
     }
 
     @Override
-    public void confirmSalary(SalaryId salaryId, SalaryForm salaryForm) {
-
-    }
-
-    @Override
-    public void addSalaryItem(String jsonSalaryItem) {
-        ObjectMapper objectMapper = new ObjectMapper();
-        SalaryItemCreated salaryItem = null;
-        try {
-             salaryItem = objectMapper.readValue(jsonSalaryItem, SalaryItemCreated.class);
-        }catch (JsonMappingException e) {
-            e.printStackTrace();
-        } catch (JsonProcessingException e) {
-            e.printStackTrace();
+    public void addSalaryItem(SalaryItemCreated salaryItem) {
+        if(salaryItem==null) {
+            throw new SalaryItemNullException();
         }
         SalaryId salaryId = new SalaryId(salaryItem.getEmployeeId(),LocalDate.parse(salaryItem.getPaymentDate()).getMonthValue(),LocalDate.parse(salaryItem.getPaymentDate()).getYear());
         Salary salary = create(salaryId.getEmployee_id(), salaryId.getMonth(), salaryId.getYear());
         salary.addSalaryItem(new SalaryItem(salaryItem.getInvoiceNum(), salaryId.getYear(), salaryItem.getCustomerName(), salaryItem.getAmount()));
+
         try{
             save(salary);
         }catch (Exception e){
             e.printStackTrace();
         }
     }
+
+    @Override
+    public Salary getSalary(SalaryId salaryId) {
+        var salary = this.findById(salaryId);
+        if(salary.isPresent()) {
+            return salary.get();
+        }else throw new SalaryNotFoundedException();
+    }
+
+    @Override
+    public void removePenalty(SalaryId salaryId) {
+        Salary salary = getSalary(salaryId);
+        salary.removeDefaultPenalty();
+        save(salary);
+    }
+
+    @Override
+    public void addBonus(SalaryId salaryId, Money money) {
+        Salary salary = getSalary(salaryId);
+        salary.addBonus(money);
+        save(salary);
+    }
+
 }

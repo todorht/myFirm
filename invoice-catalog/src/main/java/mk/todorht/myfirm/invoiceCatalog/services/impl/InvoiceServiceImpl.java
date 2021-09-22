@@ -8,10 +8,11 @@ import mk.todorht.myfirm.invoiceCatalog.domain.repository.InvoiceRepository;
 import mk.todorht.myfirm.invoiceCatalog.services.InvoiceService;
 import mk.todorht.myfirm.invoiceCatalog.services.form.InvoiceForm;
 import mk.todorht.myfirm.invoiceCatalog.services.form.PaymentForm;
-import mk.todorht.myfirm.invoiceCatalog.xport.client.EmployeeClient;
+import mk.todorht.myfirm.sharedkernel.services.EmployeeClient;
 import mk.todorht.myfirm.sharedkernel.base.EmployeeInfo;
 import mk.todorht.myfirm.sharedkernel.events.config.TopicHolder;
 import mk.todorht.myfirm.sharedkernel.events.salary.SalaryItemCreated;
+import mk.todorht.myfirm.sharedkernel.events.turnover.InvoiceCreated;
 import mk.todorht.myfirm.sharedkernel.financial.Currency;
 import mk.todorht.myfirm.sharedkernel.financial.Money;
 import mk.todorht.myfirm.sharedkernel.services.impl.GenericServiceImpl;
@@ -31,25 +32,28 @@ import javax.validation.Validator;
 @Transactional
 public class InvoiceServiceImpl extends GenericServiceImpl<Invoice, InvoiceId> implements InvoiceService {
 
-    public final Validator validator;
-    private final KafkaTemplate<String, SalaryItemCreated> kafkaTemplate;
-    public final EmployeeClient employeeClient;
+    private final Validator validator;
+    private final KafkaTemplate<String, SalaryItemCreated> kafkaSalaryTemplate;
+    private final KafkaTemplate<String, InvoiceCreated> kafkaInvoiceTemplate;
+    private final EmployeeClient employeeClient;
 
-    public InvoiceServiceImpl(InvoiceRepository invoiceRepository, Validator validator, KafkaTemplate<String, SalaryItemCreated> kafkaTemplate, EmployeeClient employeeClient) {
+    public InvoiceServiceImpl(InvoiceRepository invoiceRepository, Validator validator, KafkaTemplate<String, SalaryItemCreated> kafkaSalaryTemplate,KafkaTemplate<String, InvoiceCreated> kafkaInvoiceTemplate, EmployeeClient employeeClient) {
         super(invoiceRepository);
 
         this.validator = validator;
-        this.kafkaTemplate = kafkaTemplate;
+        this.kafkaSalaryTemplate = kafkaSalaryTemplate;
+        this.kafkaInvoiceTemplate = kafkaInvoiceTemplate;
         this.employeeClient = employeeClient;
     }
 
     @Override
     public void markAsPaid(PaymentForm paymentForm) {
-        Invoice invoice = findById(new InvoiceId(paymentForm.getInvoice_num(), paymentForm.getDate().getYear())).orElseThrow(InvoiceNotExistException::new);
+        InvoiceId invoiceId = new InvoiceId(paymentForm.getInvoice_num(), paymentForm.getDate().getYear());
+        Invoice invoice = findById(invoiceId).orElseThrow(()-> new InvoiceNotExistException(invoiceId));
         invoice.markAsPaid();
         save(invoice);
         if(ChronoUnit.DAYS.between(invoice.getCreateAt(),paymentForm.getDate())<60){
-            kafkaTemplate.send(TopicHolder.TOPIC_SALARY_ITEM_CREATED,new SalaryItemCreated(invoice.getId().getInvoice_num(),invoice.getCompanyName(),invoice.getEmployee().getId()
+            kafkaSalaryTemplate.send(TopicHolder.TOPIC_SALARY_ITEM_CREATED,new SalaryItemCreated(invoice.getId().getInvoice_num(),invoice.getCompanyName(),invoice.getEmployee().getId()
                     ,invoice.getAmount(), paymentForm.getDate()));
         }
 
@@ -71,7 +75,9 @@ public class InvoiceServiceImpl extends GenericServiceImpl<Invoice, InvoiceId> i
 
         var invoiceId = new InvoiceId(invoiceForm.getInvoice_num(),invoiceForm.getCreateAt().getYear());
         if(findById(invoiceId).isEmpty()) {
-            return save(build(invoiceId,employeeInfo.getBody(),invoiceForm));
+            var invoice = build(invoiceId,employeeInfo.getBody(),invoiceForm);
+            kafkaInvoiceTemplate.send(TopicHolder.TOPIC_INVOICE_CREATED,new InvoiceCreated(employeeInfo.getBody().getId(),invoice.getAmount(),invoice.getCreateAt().toString()));
+            return save(invoice);
         }else throw new InvoiceAlreadyExistException();
     }
 

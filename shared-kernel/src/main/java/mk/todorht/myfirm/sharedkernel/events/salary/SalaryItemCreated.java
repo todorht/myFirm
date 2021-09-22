@@ -2,13 +2,14 @@ package mk.todorht.myfirm.sharedkernel.events.salary;
 
 import lombok.Getter;
 import mk.todorht.myfirm.sharedkernel.events.DomainEvent;
+import mk.todorht.myfirm.sharedkernel.events.EventItem;
 import mk.todorht.myfirm.sharedkernel.events.config.TopicHolder;
 import mk.todorht.myfirm.sharedkernel.financial.Money;
 
 import java.time.LocalDate;
 
 @Getter
-public class SalaryItemCreated {
+public class SalaryItemCreated extends EventItem {
 
     private Long invoiceNum;
     private String customerName;
@@ -17,8 +18,6 @@ public class SalaryItemCreated {
     private String paymentDate;
 
     public SalaryItemCreated() { }
-
-
 
     public SalaryItemCreated(Long invoiceNum, String customerName,
                              Integer employeeId, Money amount, LocalDate paymentDate) {

@@ -11,6 +11,5 @@ import java.util.Optional;
 public interface EmployeeService extends GenericService<Employee, Integer> {
     List<EmployeeInfo> findAllEmployees();
     Optional<EmployeeInfo> findEmployeeById(int id);
-    Optional<EmployeeInfo> findEmployeeByCardNumber(String cardNumber);
     Employee createEmployee(EmployeeForm employeeForm);
 }

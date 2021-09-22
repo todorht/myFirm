@@ -19,15 +19,13 @@ public class Employee implements Serializable {
     private int id;
     private String name;
     private String surname;
-    private String cardNumber;
     private String email;
 
-    public static Employee build(int id, String name, String surname, String cardNumber, String email){
+    public static Employee build(int id, String name, String surname, String email){
         Employee e = new Employee();
         e.id = id;
         e.name = name;
         e.surname = surname;
-        e.cardNumber = cardNumber;
         e.email = email;
         return e;
     }

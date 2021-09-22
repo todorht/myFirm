@@ -15,5 +15,4 @@ public class EmployeeInfo implements Serializable {
     public int id;
     public String name;
     public String surname;
-    public String cardNumber;
 }

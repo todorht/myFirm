@@ -23,7 +23,7 @@ public class EmployeeServiceImpl extends GenericServiceImpl<Employee, Integer> i
     }
 
     private EmployeeInfo mapFrom(Employee employee){
-        return new EmployeeInfo(employee.getId(), employee.getName(), employee.getSurname(), employee.getCardNumber());
+        return new EmployeeInfo(employee.getId(), employee.getName(), employee.getSurname());
     }
 
     @Override
@@ -41,20 +41,12 @@ public class EmployeeServiceImpl extends GenericServiceImpl<Employee, Integer> i
         }else return findById(id).map(this::mapFrom);
     }
 
-    @Override
-    public Optional<EmployeeInfo> findEmployeeByCardNumber(String cardNumber) {
-        var employeeInfo = findAll().stream()
-                .filter(employee1 -> employee1.getCardNumber()
-                        .equals(cardNumber)).findFirst();
-        if(employeeInfo.isEmpty()){
-            throw new EmployeeNotFounded();
-        }else return employeeInfo.map(this::mapFrom);
-    }
+
 
     @Override
     public Employee createEmployee(EmployeeForm employeeForm) {
         if(findById(employeeForm.getId()).isPresent()) throw new EmployeeWithThisIdAlreadyExist();
-        Employee e = Employee.build(employeeForm.getId(), employeeForm.getName(), employeeForm.getSurname(), employeeForm.getCardNumber(), employeeForm.getEmail());
+        Employee e = Employee.build(employeeForm.getId(), employeeForm.getName(), employeeForm.getSurname(), employeeForm.getEmail());
         save(e);
         return e;
     }

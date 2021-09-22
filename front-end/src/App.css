@@ -1,0 +1,32 @@
+
+.float-container {
+  display: flex;
+  border: 3px solid #fff;
+  padding: 20px;
+}
+
+.float-child {
+  width: 90%;
+  float: bottom;
+  padding: 20px;
+  border: 2px solid darkblue;
+}
+
+.top-float-child {
+  width: 90%;
+  float: top;
+  padding: 20px;
+  border: 2px solid darkblue;
+}
+
+.header {
+  box-sizing: border-box;
+  width: 100%;
+  display: flex;
+  justify-content: center;
+  align-items: baseline;
+  padding: 1em;
+  margin-bottom: 2em;
+  background-color: rgb(192, 45, 26);
+  color: #fff;
+}

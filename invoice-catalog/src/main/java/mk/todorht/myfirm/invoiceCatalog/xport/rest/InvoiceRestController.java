@@ -23,18 +23,27 @@ public class InvoiceRestController {
         return this.invoiceService.findAll();
     }
 
-    @GetMapping("/")
+    @GetMapping
     public ResponseEntity<Invoice> getInvoice(@RequestBody InvoiceId invoiceId){
         var invoice = this.invoiceService.findById(invoiceId);
         return invoice.map(i -> ResponseEntity.ok().body(i))
                 .orElseGet(()->ResponseEntity.notFound().build());
     }
 
-    @PutMapping("/")
+    @DeleteMapping
+    public void deleteInvoice(@RequestBody InvoiceId invoiceId){
+        this.invoiceService.deleteById(invoiceId);
+    }
+
+    @PutMapping
     public void markAsPaid(@RequestBody PaymentForm paymentForm){ this.invoiceService.markAsPaid(paymentForm); }
 
     @GetMapping("/{employeeId}")
     public List<Invoice> getAllInvoiceByEmployee(@PathVariable Integer employeeId){ return this.invoiceService.findAllByEmployeeId(employeeId); }
 
+    @PostMapping
+    public void createNewInvoice(@RequestBody InvoiceForm invoiceForm){
+        this.invoiceService.createInvoice(invoiceForm);
+    }
 
 }
